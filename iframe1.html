@@ -1,0 +1,44 @@
+<!doctype>
+<html>
+<body>
+
+<div id="r"></div>
+
+<script>
+  const r = document.querySelector('#r');
+  let port;
+
+  window.addEventListener('message', init);
+
+  function init(ev) {
+    if (ev.data === 'initPorts') {
+      port = ev.ports[0];
+      port.onmessage = onMessage;
+    }
+  }
+
+  function start() {
+    setInterval(() => {
+      port.postMessage(selectMessage());
+    }, 0);
+  }
+
+  function onMessage(msg) {
+    if (msg.data === 'start') {
+      return start();
+    }
+
+    const el = document.createElement('div');
+    el.textContent = msg.data;
+    r.appendChild(el);
+  }
+
+  function selectMessage() {
+    const s = Math.random() * 10;
+    if (s < 3) return 'Message_for_iframe_1_type_1';
+    if (s >= 3 && s<6) return 'Message_for_iframe_1_type_2';
+    if (s >=6 && s<9) return 'Message_for_iframe_1_type_3';
+    return 'Message_for_iframe_1_type_4';
+  }
+</script>
+</html>

@@ -1,0 +1,34 @@
+<!doctype>
+<html>
+<body>
+<iframe src="iframe1.html" width="300" height="500"></iframe>
+<iframe src="iframe2.html" width="300" height="500"></iframe>
+
+<script>
+  const iframe1 = document.querySelector('iframe[src*=iframe1]');
+  const iframe2 = document.querySelector('iframe[src*=iframe2]');
+
+  iframe1.onload = onLoad.bind(iframe1);
+  iframe2.onload = onLoad.bind(iframe2);
+
+  let count = 0;
+
+  function onLoad() {
+    const channel = new MessageChannel();
+    const { port1, port2 } = channel;
+    this.contentWindow.postMessage('initPorts', '*', [port2]);
+    port1.onmessage = onMessage.bind(port1);
+
+    setTimeout(() => {
+      port1.postMessage('start');
+    }, 5000);
+  }
+
+  function onMessage(msg) {
+    if (count > 2000) return;
+    count++;
+    this.postMessage(msg.data);
+  }
+</script>
+</body>
+</html>
